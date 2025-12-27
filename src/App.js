@@ -224,7 +224,7 @@ export default function App() {
     iron: 50,
     food: 300,
     gold: 20,
-    pop: 10,
+    pop: 15,
     tools: 10,
     weapons: 10,
   });
@@ -265,7 +265,7 @@ export default function App() {
   const [selectedTile, setSelectedTile] = useState(null);
   const [viewingMission, setViewingMission] = useState(null);
   const [viewingConstruction, setViewingConstruction] = useState(null);
-  const [modalTab, setModalTab] = useState("gather");
+  const [modalTab, setModalTab] = useState("scout");
   const [selection, setSelection] = useState({
     workers: 0,
     tools: 0,
@@ -278,20 +278,29 @@ export default function App() {
   const [productionQueue, setProductionQueue] = useState([]);
   const [showPersonalityModal, setShowPersonalityModal] = useState(false);
 
+  // 🔄 LOAD WITH MIGRATION SYSTEM
   useEffect(() => {
-  try {
-    const s = localStorage.getItem("tribeGameSave_v2");
-    if (s) {
-      const d = JSON.parse(s);
-      if (d.version === 1) {
-        // 🔄 AUTO-MIGRACE: Dej všem hráčům +5 pop (pokud mají méně než 15)
-        const migratedResources = {
-          ...d.resources,
-          pop: d.resources.pop < 15 ? 15 : d.resources.pop
-        };
+    try {
+      const s = localStorage.getItem("tribeGameSave");
+      if (s) {
+        let d = JSON.parse(s);
+        
+        // 🔄 SYSTÉM MIGRACE MEZI VERZEMI
+        
+        // Migrace verze 1 → 2: Zvýšení populace na 15
+        if (!d.version || d.version === 1) {
+          d.resources.pop = d.resources.pop < 15 ? 15 : d.resources.pop;
+          d.version = 2;
+        }
+        
+        // 🔮 BUDOUCÍ MIGRACE (přidej sem za měsíc):
+        // if (d.version === 2) {
+        //   d.resources.mana = 0;  // Příklad: nový resource
+        //   d.version = 3;
+        // }
         
         setGameState(d.gameState || "start");
-        setResources(migratedResources);
+        setResources(d.resources);
         setBuildings(d.buildings);
         setTroops(d.troops);
         setHero(d.hero);
@@ -303,19 +312,19 @@ export default function App() {
         setTileStates(d.tileStates || {});
         setProductionQueue(d.productionQueue || []);
       }
+    } catch (e) {
+      console.error("Load:", e);
     }
-  } catch (e) {
-    console.error("Load:", e);
-  }
-}, []);
+  }, []);
 
+  // 💾 SAVE
   useEffect(() => {
     if (gameState === "playing") {
       try {
         localStorage.setItem(
-          "tribeGameSave_v2",
+          "tribeGameSave",
           JSON.stringify({
-            version: 1,
+            version: 2,
             gameState,
             resources,
             buildings,
@@ -588,7 +597,6 @@ export default function App() {
     },
     [heroStats, limits.storage, updateHeroXP]
   );
-
   useEffect(() => {
     if (gameState !== "playing") return;
     const now = currentTime;
@@ -1866,23 +1874,49 @@ export default function App() {
               </div>
             </div>
             <div className="p-4">
+              {/* ✅ OPRAVENÉ TABYY - PRŮZKUM FUNGUJE PRO VŠECHNA POLÍČKA */}
               <div className="flex space-x-1 mb-4 border-b border-stone-700">
-                {["gather", "attack", "scout"].map((tab) => (
+                {/* GATHER - jen když jsou suroviny */}
+                {selectedTile.data.resource && selectedTile.data.resource !== "none" && (
                   <button
-                    key={tab}
-                    onClick={() => setModalTab(tab)}
+                    onClick={() => setModalTab("gather")}
                     className={`px-3 py-2 text-xs font-black ${
-                      modalTab === tab
+                      modalTab === "gather"
                         ? "text-amber-500 border-b-2 border-amber-500"
                         : "text-stone-600"
                     }`}
                   >
-                    {tab === "gather" ? "📦" : tab === "attack" ? "⚔️" : "👁️"}
+                    📦
                   </button>
-                ))}
+                )}
+                
+                {/* ATTACK - jen když jsou nepřátelé */}
+                {selectedTile.data.type === "enemy" && (
+                  <button
+                    onClick={() => setModalTab("attack")}
+                    className={`px-3 py-2 text-xs font-black ${
+                      modalTab === "attack"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-stone-600"
+                    }`}
+                  >
+                    ⚔️
+                  </button>
+                )}
+                
+                {/* SCOUT - VŽDY dostupný pro všechna políčka */}
+                <button
+                  onClick={() => setModalTab("scout")}
+                  className={`px-3 py-2 text-xs font-black ${
+                    modalTab === "scout"
+                      ? "text-amber-500 border-b-2 border-amber-500"
+                      : "text-stone-600"
+                  }`}
+                >
+                  👁️
+                </button>
               </div>
-
-              {modalTab === "gather" &&
+{modalTab === "gather" &&
                 selectedTile.data.resource &&
                 selectedTile.data.resource !== "none" && (
                   <div className="space-y-3">
@@ -2500,9 +2534,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
-
-
-
