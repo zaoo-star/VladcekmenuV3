@@ -237,7 +237,7 @@ export default function App() {
     ironmine: { level: 0, name: "Železný důl", desc: "Produkce železa" },
     goldmine: { level: 0, name: "Zlatý důl", desc: "Těžba zlata" },
     pigfarm: { level: 2, name: "Vepřín", desc: "Produkce jídla" },
-    farm: { level: 3, name: "Selský dvůr", desc: "Kapacita lidu" },
+    farm: { level: 2, name: "Selský dvůr", desc: "Kapacita lidu" },
     house: { level: 1, name: "Ubytovna", desc: "Kapacita vojska" },
     warehouse: { level: 1, name: "Skladiště", desc: "Sklad surovin" },
     wall: { level: 0, name: "Hradby", desc: "Obrana sídla" },
@@ -2494,6 +2494,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
