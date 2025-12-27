@@ -2501,6 +2501,7 @@ import {
 } from 'lucide-react';
 
 // --- VERZE HRY (Tuto změň vždy, když chceš, aby se změna projevila všem) ---
+// Pokud chceš po opravě chyby vynutit refresh, změň na "1.0.3"
 const APP_VERSION = "1.0.2"; 
 
 export default function App() {
@@ -2532,10 +2533,10 @@ export default function App() {
     window.location.reload(true);
   };
 
-  // --- TVÉ HERNÍ STATY (Změň tyto hodnoty a pak změň APP_VERSION nahoře) ---
+  // --- TVÉ HERNÍ STATY ---
   const [res, setRes] = useState({ wood: 1500, stone: 1500, iron: 1000, food: 1500 });
   const [buildings, setBuildings] = useState({
-    hq: { level: 2, name: 'Hlavní budova' }, // Změnil jsem na lvl 2 pro test
+    hq: { level: 2, name: 'Hlavní budova' },
     woodcamp: { level: 1, name: 'Dřevorubec' },
     quarry: { level: 1, name: 'Kamenolom' }
   });
@@ -2544,33 +2545,33 @@ export default function App() {
     return (
       <div className="flex flex-col h-screen items-center justify-center bg-stone-950 p-10 text-center text-white">
         <Swords size={60} className="text-amber-500 mb-4" />
-        <h1 className="text-4xl font-black italic text-amber-500 mb-8">VLÁDCE KMENŮ</h1>
+        <h1 className="text-4xl font-black italic text-amber-500 mb-8 uppercase tracking-tighter">VLÁDCE KMENŮ</h1>
         <input 
-          className="w-full max-w-xs bg-stone-900 border border-stone-800 p-4 rounded-2xl text-white mb-4 focus:border-amber-500 outline-none"
-          placeholder="Jméno hrdiny"
+          className="w-full max-w-xs bg-stone-900 border border-stone-800 p-4 rounded-2xl text-white mb-4 focus:border-amber-500 outline-none font-bold text-center"
+          placeholder="Jméno tvého hrdiny"
           value={heroName}
           onChange={e => setHeroName(e.target.value)}
         />
         <button 
           onClick={() => heroName && setGameState('playing')}
-          className="w-full max-w-xs py-4 bg-amber-600 rounded-2xl font-bold uppercase"
+          className="w-full max-w-xs py-4 bg-amber-600 rounded-2xl font-black uppercase shadow-2xl active:scale-95 transition-all"
         >
           Vstoupit do hry
         </button>
-        <div className="mt-8 text-[10px] text-stone-600 uppercase tracking-widest">Verze {APP_VERSION}</div>
+        <div className="mt-8 text-[10px] text-stone-600 uppercase tracking-widest font-bold">Systémová Verze {APP_VERSION}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-stone-950 text-white max-w-md mx-auto relative overflow-hidden">
+    <div className="flex flex-col h-screen bg-stone-950 text-white max-w-md mx-auto relative overflow-hidden font-sans">
       
       {/* HUD */}
-      <div className="bg-stone-900/80 p-3 grid grid-cols-4 gap-2 border-b border-white/5 text-[10px] font-bold">
-        <div className="text-orange-400">🪵 {Math.floor(res.wood)}</div>
-        <div className="text-stone-300">🧱 {Math.floor(res.stone)}</div>
-        <div className="text-blue-400">🪙 {Math.floor(res.iron)}</div>
-        <button onClick={() => setShowSettings(true)} className="text-stone-500 flex justify-end">
+      <div className="bg-stone-900/80 p-3 grid grid-cols-4 gap-2 border-b border-white/5 text-[10px] font-black uppercase tracking-tight">
+        <div className="text-orange-400 bg-black/20 p-1 rounded-lg text-center">🪵 {Math.floor(res.wood)}</div>
+        <div className="text-stone-300 bg-black/20 p-1 rounded-lg text-center">🧱 {Math.floor(res.stone)}</div>
+        <div className="text-blue-400 bg-black/20 p-1 rounded-lg text-center">🪙 {Math.floor(res.iron)}</div>
+        <button onClick={() => setShowSettings(true)} className="text-stone-500 flex justify-end items-center pr-2">
           <Settings size={14} />
         </button>
       </div>
@@ -2578,51 +2579,68 @@ export default function App() {
       {/* OBSAH */}
       <div className="flex-1 overflow-y-auto p-4 pb-24">
         {activeTab === 'village' && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-black italic">Vesnice</h2>
+          <div className="space-y-4 animate-in fade-in duration-500">
+            <h2 className="text-xl font-black italic uppercase tracking-tighter text-amber-500">Moje Vesnice</h2>
+            <div className="h-40 bg-stone-800 rounded-[2rem] border-2 border-stone-700 flex items-center justify-center relative shadow-inner overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-stone-700/20 to-transparent"></div>
+                <span className="text-stone-700 font-black text-3xl opacity-20 italic">500 | 500</span>
+            </div>
             {Object.entries(buildings).map(([id, b]) => (
-              <div key={id} className="bg-stone-900 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
+              <div key={id} className="bg-stone-900 p-4 rounded-3xl border border-white/5 flex justify-between items-center shadow-lg transition-all hover:border-amber-500/30">
                 <div>
-                  <div className="text-xs font-bold text-amber-500 uppercase">{b.name}</div>
-                  <div className="text-[10px] text-stone-500 tracking-wider">Úroveň {b.level}</div>
+                  <div className="text-xs font-black text-amber-500 uppercase tracking-tight">{b.name}</div>
+                  <div className="text-[10px] text-stone-500 font-bold uppercase">Úroveň {b.level}</div>
                 </div>
-                <button className="bg-stone-800 px-4 py-2 rounded-xl text-[10px] font-bold uppercase">Upgrade</button>
+                <button className="bg-stone-800 hover:bg-amber-600 px-4 py-2 rounded-2xl text-[10px] font-black uppercase transition-all active:scale-90 shadow-md">Upgrade</button>
               </div>
             ))}
           </div>
         )}
         
-        {activeTab === 'map' && <div className="text-center py-20 text-stone-600 uppercase text-xs font-bold tracking-widest">Mapa světa 500|500</div>}
-        {activeTab === 'hero' && <div className="text-center py-20 text-stone-600 uppercase text-xs font-bold tracking-widest">Hrdina {heroName}</div>}
+        {activeTab === 'map' && <div className="text-center py-20 text-stone-600 uppercase text-xs font-black tracking-[0.2em] animate-pulse">Mapa světa se načítá...</div>}
+        {activeTab === 'hero' && (
+            <div className="text-center py-10 space-y-6 animate-in zoom-in-95 duration-300">
+                <div className="w-24 h-24 bg-stone-800 border-4 border-amber-600 rounded-full mx-auto flex items-center justify-center text-4xl shadow-2xl relative">
+                    🛡️
+                    <div className="absolute -bottom-1 -right-1 bg-amber-500 text-black text-[9px] font-black px-2 py-0.5 rounded-full uppercase italic">Lvl 1</div>
+                </div>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter">{heroName}</h2>
+            </div>
+        )}
       </div>
 
       {/* MODÁLNÍ OKNO NASTAVENÍ */}
       {showSettings && (
-        <div className="absolute inset-0 bg-black/90 z-[100] p-10 flex flex-col items-center justify-center text-center">
-          <button onClick={() => setShowSettings(false)} className="absolute top-6 right-6 text-stone-500"><X /></button>
-          <h3 className="text-xl font-black mb-2 italic uppercase">Nastavení systému</h3>
-          <p className="text-[10px] text-stone-500 mb-8 uppercase tracking-widest">Aktuální verze: {APP_VERSION}</p>
-          
-          <button 
-            onClick={forceUpdate}
-            className="flex items-center gap-3 bg-stone-800 hover:bg-stone-700 px-6 py-4 rounded-2xl text-xs font-bold uppercase transition-all active:scale-95"
-          >
-            <RefreshCw size={16} className="text-amber-500" />
-            Vynutit aktualizaci hry
-          </button>
-          <p className="mt-4 text-[9px] text-stone-600 italic">Použijte, pokud nevidíte poslední změny v budovách.</p>
+        <div className="absolute inset-0 bg-black/95 z-[100] p-10 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in-95 duration-200">
+          <button onClick={() => setShowSettings(false)} className="absolute top-8 right-8 text-stone-500 hover:text-white transition-colors"><X size={32} /></button>
+          <div className="bg-amber-500/10 p-6 rounded-[3rem] border border-amber-500/20 w-full max-w-xs">
+            <h3 className="text-xl font-black mb-1 italic uppercase text-amber-500 tracking-tighter">Systémový Terminál</h3>
+            <p className="text-[10px] text-stone-500 mb-8 uppercase tracking-[0.3em] font-bold">Verze: {APP_VERSION}</p>
+            
+            <button 
+                onClick={forceUpdate}
+                className="w-full flex items-center justify-center gap-3 bg-stone-800 hover:bg-amber-600 px-6 py-5 rounded-3xl text-[11px] font-black uppercase transition-all active:scale-95 shadow-2xl group"
+            >
+                <RefreshCw size={18} className="text-amber-500 group-hover:text-white group-hover:rotate-180 transition-all duration-500" />
+                Vynutit aktualizaci
+            </button>
+            <p className="mt-6 text-[9px] text-stone-600 italic font-medium leading-relaxed">
+                Tuto akci proveďte pouze v případě, že nevidíte poslední nahrané změny budov nebo surovin.
+            </p>
+          </div>
         </div>
       )}
 
       {/* NAVIGACE */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-stone-900 border-t border-white/10 flex justify-around p-5 rounded-t-[2.5rem]">
-        <button onClick={() => setActiveTab('village')} className={activeTab === 'village' ? 'text-amber-500' : 'text-stone-600'}><Home /></button>
-        <button onClick={() => setActiveTab('map')} className={activeTab === 'map' ? 'text-amber-500' : 'text-stone-600'}><MapIcon /></button>
-        <button onClick={() => setActiveTab('hero')} className={activeTab === 'hero' ? 'text-amber-500' : 'text-stone-600'}><User /></button>
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-stone-900 border-t border-white/10 flex justify-around p-5 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-50">
+        <button onClick={() => setActiveTab('village')} className={`transition-all duration-300 p-2 rounded-2xl ${activeTab === 'village' ? 'text-amber-500 bg-amber-500/10 scale-110 shadow-inner' : 'text-stone-600 hover:text-stone-400'}`}><Home size={24} /></button>
+        <button onClick={() => setActiveTab('map')} className={`transition-all duration-300 p-2 rounded-2xl ${activeTab === 'map' ? 'text-amber-500 bg-amber-500/10 scale-110 shadow-inner' : 'text-stone-600 hover:text-stone-400'}`}><MapIcon size={24} /></button>
+        <button onClick={() => setActiveTab('hero')} className={`transition-all duration-300 p-2 rounded-2xl ${activeTab === 'hero' ? 'text-amber-500 bg-amber-500/10 scale-110 shadow-inner' : 'text-stone-600 hover:text-stone-400'}`}><User size={24} /></button>
       </div>
     </div>
   );
 }
+
 
 
 
