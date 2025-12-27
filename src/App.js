@@ -2494,6 +2494,135 @@ export default function App() {
     </div>
   );
 }
+import React, { useState, useEffect } from 'react';
+import { 
+  Home, Map as MapIcon, User, Swords, Trees, Mountain, Pickaxe, 
+  Drumstick, Settings, RefreshCw, X 
+} from 'lucide-react';
+
+// --- VERZE HRY (Tuto změň vždy, když chceš, aby se změna projevila všem) ---
+const APP_VERSION = "1.0.2"; 
+
+export default function App() {
+  const [gameState, setGameState] = useState('start');
+  const [activeTab, setActiveTab] = useState('village');
+  const [showSettings, setShowSettings] = useState(false);
+  const [heroName, setHeroName] = useState('');
+
+  // --- LOGIKA PRO AUTOMATICKOU AKTUALIZACI ---
+  useEffect(() => {
+    const savedVersion = localStorage.getItem('app_version');
+    if (savedVersion !== APP_VERSION) {
+      localStorage.setItem('app_version', APP_VERSION);
+      // Pokud existovala stará verze, vynutíme reload
+      if (savedVersion !== null) {
+        window.location.reload(true);
+      }
+    }
+  }, []);
+
+  // --- FUNKCE PRO RUČNÍ "HARD RELOAD" ---
+  const forceUpdate = () => {
+    // Smaže cache a vynutí načtení ze serveru
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) { registration.unregister(); }
+      });
+    }
+    window.location.reload(true);
+  };
+
+  // --- TVÉ HERNÍ STATY (Změň tyto hodnoty a pak změň APP_VERSION nahoře) ---
+  const [res, setRes] = useState({ wood: 1500, stone: 1500, iron: 1000, food: 1500 });
+  const [buildings, setBuildings] = useState({
+    hq: { level: 2, name: 'Hlavní budova' }, // Změnil jsem na lvl 2 pro test
+    woodcamp: { level: 1, name: 'Dřevorubec' },
+    quarry: { level: 1, name: 'Kamenolom' }
+  });
+
+  if (gameState === 'start') {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-stone-950 p-10 text-center text-white">
+        <Swords size={60} className="text-amber-500 mb-4" />
+        <h1 className="text-4xl font-black italic text-amber-500 mb-8">VLÁDCE KMENŮ</h1>
+        <input 
+          className="w-full max-w-xs bg-stone-900 border border-stone-800 p-4 rounded-2xl text-white mb-4 focus:border-amber-500 outline-none"
+          placeholder="Jméno hrdiny"
+          value={heroName}
+          onChange={e => setHeroName(e.target.value)}
+        />
+        <button 
+          onClick={() => heroName && setGameState('playing')}
+          className="w-full max-w-xs py-4 bg-amber-600 rounded-2xl font-bold uppercase"
+        >
+          Vstoupit do hry
+        </button>
+        <div className="mt-8 text-[10px] text-stone-600 uppercase tracking-widest">Verze {APP_VERSION}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-screen bg-stone-950 text-white max-w-md mx-auto relative overflow-hidden">
+      
+      {/* HUD */}
+      <div className="bg-stone-900/80 p-3 grid grid-cols-4 gap-2 border-b border-white/5 text-[10px] font-bold">
+        <div className="text-orange-400">🪵 {Math.floor(res.wood)}</div>
+        <div className="text-stone-300">🧱 {Math.floor(res.stone)}</div>
+        <div className="text-blue-400">🪙 {Math.floor(res.iron)}</div>
+        <button onClick={() => setShowSettings(true)} className="text-stone-500 flex justify-end">
+          <Settings size={14} />
+        </button>
+      </div>
+
+      {/* OBSAH */}
+      <div className="flex-1 overflow-y-auto p-4 pb-24">
+        {activeTab === 'village' && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-black italic">Vesnice</h2>
+            {Object.entries(buildings).map(([id, b]) => (
+              <div key={id} className="bg-stone-900 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
+                <div>
+                  <div className="text-xs font-bold text-amber-500 uppercase">{b.name}</div>
+                  <div className="text-[10px] text-stone-500 tracking-wider">Úroveň {b.level}</div>
+                </div>
+                <button className="bg-stone-800 px-4 py-2 rounded-xl text-[10px] font-bold uppercase">Upgrade</button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {activeTab === 'map' && <div className="text-center py-20 text-stone-600 uppercase text-xs font-bold tracking-widest">Mapa světa 500|500</div>}
+        {activeTab === 'hero' && <div className="text-center py-20 text-stone-600 uppercase text-xs font-bold tracking-widest">Hrdina {heroName}</div>}
+      </div>
+
+      {/* MODÁLNÍ OKNO NASTAVENÍ */}
+      {showSettings && (
+        <div className="absolute inset-0 bg-black/90 z-[100] p-10 flex flex-col items-center justify-center text-center">
+          <button onClick={() => setShowSettings(false)} className="absolute top-6 right-6 text-stone-500"><X /></button>
+          <h3 className="text-xl font-black mb-2 italic uppercase">Nastavení systému</h3>
+          <p className="text-[10px] text-stone-500 mb-8 uppercase tracking-widest">Aktuální verze: {APP_VERSION}</p>
+          
+          <button 
+            onClick={forceUpdate}
+            className="flex items-center gap-3 bg-stone-800 hover:bg-stone-700 px-6 py-4 rounded-2xl text-xs font-bold uppercase transition-all active:scale-95"
+          >
+            <RefreshCw size={16} className="text-amber-500" />
+            Vynutit aktualizaci hry
+          </button>
+          <p className="mt-4 text-[9px] text-stone-600 italic">Použijte, pokud nevidíte poslední změny v budovách.</p>
+        </div>
+      )}
+
+      {/* NAVIGACE */}
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-stone-900 border-t border-white/10 flex justify-around p-5 rounded-t-[2.5rem]">
+        <button onClick={() => setActiveTab('village')} className={activeTab === 'village' ? 'text-amber-500' : 'text-stone-600'}><Home /></button>
+        <button onClick={() => setActiveTab('map')} className={activeTab === 'map' ? 'text-amber-500' : 'text-stone-600'}><MapIcon /></button>
+        <button onClick={() => setActiveTab('hero')} className={activeTab === 'hero' ? 'text-amber-500' : 'text-stone-600'}><User /></button>
+      </div>
+    </div>
+  );
+}
 
 
 
