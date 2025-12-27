@@ -219,11 +219,11 @@ export default function App() {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [showNotification, setShowNotification] = useState(null);
   const [resources, setResources] = useState({
-    wood: 500,
-    stone: 500,
-    iron: 250,
+    wood: 300,
+    stone: 300,
+    iron: 50,
     food: 300,
-    gold: 0,
+    gold: 20,
     pop: 10,
     tools: 5,
     weapons: 5,
@@ -2494,3 +2494,4 @@ export default function App() {
     </div>
   );
 }
+
