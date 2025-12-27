@@ -56,8 +56,8 @@ const BUILDING_STATS = {
   quarry: { w: 40, s: 50, p: 1, t: 25, tools: 1 },
   ironmine: { w: 80, s: 80, p: 2, t: 35, tools: 2 },
   goldmine: { w: 300, s: 300, p: 3, t: 150, tools: 5 },
-  pigfarm: { w: 60, s: 40, p: 1, t: 30, tools: 1 },
-  farm: { w: 50, s: 50, p: 0, t: 40, tools: 1 },
+  pigfarm: { w: 60, s: 40, p: 1, t: 30, tools: 0 },
+  farm: { w: 50, s: 50, p: 0, t: 40, tools: 0 },
   house: { w: 70, s: 60, p: 0, t: 45, tools: 1 },
   warehouse: { w: 80, s: 80, p: 1, t: 30, tools: 1 },
   wall: { w: 100, s: 200, p: 0, t: 60, tools: 3 },
@@ -73,7 +73,7 @@ const INITIAL_HERO = {
   name: "Náčelník",
   level: 1,
   xp: 0,
-  skillPoints: 0,
+  skillPoints: 1,
   baseAtk: 50,
   baseDef: 50,
   skills: { gather: 0, combat: 0, speed: 0, heroAttack: 0, heroDefense: 0 },
@@ -225,8 +225,8 @@ export default function App() {
     food: 300,
     gold: 20,
     pop: 10,
-    tools: 5,
-    weapons: 5,
+    tools: 10,
+    weapons: 10,
   });
   const [buildings, setBuildings] = useState({
     hq: { level: 1, name: "Hlavní budova", desc: "Srdce vesnice" },
@@ -2494,6 +2494,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
