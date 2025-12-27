@@ -224,7 +224,7 @@ export default function App() {
     iron: 50,
     food: 300,
     gold: 20,
-    pop: 15,
+    pop: 10,
     tools: 5,
     weapons: 5,
   });
@@ -2494,5 +2494,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
