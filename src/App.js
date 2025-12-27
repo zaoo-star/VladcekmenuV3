@@ -280,7 +280,7 @@ export default function App() {
 
   useEffect(() => {
   try {
-    const s = localStorage.getItem("tribeGameSave_v1");
+    const s = localStorage.getItem("tribeGameSave_v2");
     if (s) {
       const d = JSON.parse(s);
       if (d.version === 1) {
@@ -313,7 +313,7 @@ export default function App() {
     if (gameState === "playing") {
       try {
         localStorage.setItem(
-          "tribeGameSave_v1",
+          "tribeGameSave_v2",
           JSON.stringify({
             version: 1,
             gameState,
@@ -2500,6 +2500,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
