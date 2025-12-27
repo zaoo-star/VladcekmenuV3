@@ -279,29 +279,35 @@ export default function App() {
   const [showPersonalityModal, setShowPersonalityModal] = useState(false);
 
   useEffect(() => {
-    try {
-      const s = localStorage.getItem("tribeGameSave_v1");
-      if (s) {
-        const d = JSON.parse(s);
-        if (d.version === 1) {
-          setGameState(d.gameState || "start");
-          setResources(d.resources);
-          setBuildings(d.buildings);
-          setTroops(d.troops);
-          setHero(d.hero);
-          setMissions(d.missions || []);
-          setConstructions(d.constructions || []);
-          setReports(d.reports || []);
-          setMapPos(d.mapPos || { x: 500, y: 500 });
-          setDiscovered(d.discovered);
-          setTileStates(d.tileStates || {});
-          setProductionQueue(d.productionQueue || []);
-        }
+  try {
+    const s = localStorage.getItem("tribeGameSave_v1");
+    if (s) {
+      const d = JSON.parse(s);
+      if (d.version === 1) {
+        // 🔄 AUTO-MIGRACE: Dej všem hráčům +5 pop (pokud mají méně než 15)
+        const migratedResources = {
+          ...d.resources,
+          pop: d.resources.pop < 15 ? 15 : d.resources.pop
+        };
+        
+        setGameState(d.gameState || "start");
+        setResources(migratedResources);
+        setBuildings(d.buildings);
+        setTroops(d.troops);
+        setHero(d.hero);
+        setMissions(d.missions || []);
+        setConstructions(d.constructions || []);
+        setReports(d.reports || []);
+        setMapPos(d.mapPos || { x: 500, y: 500 });
+        setDiscovered(d.discovered);
+        setTileStates(d.tileStates || {});
+        setProductionQueue(d.productionQueue || []);
       }
-    } catch (e) {
-      console.error("Load:", e);
     }
-  }, []);
+  } catch (e) {
+    console.error("Load:", e);
+  }
+}, []);
 
   useEffect(() => {
     if (gameState === "playing") {
@@ -2494,6 +2500,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
