@@ -1,42 +1,308 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, shrink-to-fit=no"
-  />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>Vládce Kmenů</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏒 Hokej Manažer Pro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg1:#0F172A;--bg2:#1E293B;--bg3:#334155;--txt:#FFF;--txt2:#94A3B8;--txt3:#64748B;--blue:#3B82F6;--green:#10B981;--red:#EF4444;--yellow:#F59E0B;--purple:#8B5CF6;--cyan:#06B6D4}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg1);color:var(--txt);min-height:100vh}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.hdr{background:var(--bg2);padding:10px 12px;border-bottom:1px solid var(--bg3);position:sticky;top:0;z-index:100}
+.hdr-c{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tm-i{display:flex;align-items:center;gap:8px}
+.tm-l{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px}
+.tm-n{font-weight:700;font-size:14px}
+.tm-s{font-size:10px;color:var(--txt3)}
+.hdr-st{display:flex;gap:8px;align-items:center}
+.st-i{text-align:right}
+.st-l{font-size:8px;color:var(--txt3);text-transform:uppercase}
+.st-v{font-size:12px;font-weight:700}
+.grn{color:var(--green)}.red{color:var(--red)}.blu{color:var(--blue)}.ylw{color:var(--yellow)}.pur{color:var(--purple)}
+.play-btn{background:linear-gradient(135deg,var(--green),#059669);border:none;color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+.play-btn:disabled{background:var(--bg3);cursor:not-allowed}
+.cnt{flex:1;overflow-y:auto;padding-bottom:70px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--bg3);display:flex;justify-content:space-around;padding:6px 2px;z-index:100}
+.nav-b{background:none;border:none;color:var(--txt3);font-size:8px;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav-b.act{color:var(--blue)}
+.nav-b .ic{font-size:16px}
+.sel{padding:16px;text-align:center}
+.logo-c{width:70px;height:70px;margin:16px auto;background:linear-gradient(135deg,#DC2626,#2563EB);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.title{font-size:24px;font-weight:900;background:linear-gradient(90deg,#fff,#93C5FD,#FCA5A5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--txt3);font-size:11px;letter-spacing:2px;margin-top:4px}
+.badges{display:flex;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+.badge{padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600}
+.badge.r{background:rgba(239,68,68,0.2);color:#FCA5A5}
+.badge.b{background:rgba(59,130,246,0.2);color:#93C5FD}
+.badge.g{background:rgba(16,185,129,0.2);color:#6EE7B7}
+.sec-t{font-size:16px;font-weight:700;margin:20px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tmc{background:rgba(30,41,59,0.6);border:1px solid rgba(71,85,105,0.3);border-radius:12px;padding:12px;cursor:pointer;text-align:center}
+.tmc:active{transform:scale(0.97);border-color:var(--blue)}
+.tmc .tm-l{width:44px;height:44px;margin:0 auto 8px;font-size:14px}
+.tmc .nm{font-size:12px;font-weight:600}
+.tmc .ct{font-size:10px;color:var(--txt3)}
+.tmc .bg{font-size:11px;color:var(--green);margin-top:4px;font-weight:600}
+.pl{padding:10px}
+.pc{background:var(--bg2);border-radius:10px;margin-bottom:6px;border:1px solid var(--bg3);overflow:hidden}
+.pc.exp{border-color:var(--blue)}
+.pc.loan{border-color:var(--purple);background:rgba(139,92,246,0.05)}
+.pm{display:flex;align-items:center;padding:10px;gap:10px;cursor:pointer}
+.pos{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.pos.G{background:rgba(168,85,247,0.2);color:#C084FC}
+.pos.D{background:rgba(59,130,246,0.2);color:#60A5FA}
+.pos.F{background:rgba(239,68,68,0.2);color:#F87171}
+.pi{flex:1;min-width:0}
+.pn{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd{font-size:10px;color:var(--txt3);margin-top:1px}
+.ovr{font-size:18px;font-weight:700}
+.r85{color:#10B981}.r75{color:#22C55E}.r65{color:#EAB308}.r55{color:#F97316}.rlo{color:#EF4444}
+.pex{padding:10px;border-top:1px solid var(--bg3);background:var(--bg1)}
+.srow{display:flex;justify-content:space-around;margin-bottom:10px}
+.sbox{text-align:center}
+.sbox-l{font-size:8px;color:var(--txt3)}
+.sbox-v{font-size:14px;font-weight:700}
+.pex-btns{display:flex;gap:6px;flex-wrap:wrap}
+.pex-btn{flex:1;min-width:80px;padding:8px;border:none;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
+.pex-btn.train{background:rgba(6,182,212,0.15);color:var(--cyan)}
+.pex-btn.contract{background:rgba(245,158,11,0.15);color:var(--yellow)}
+.pex-btn.loan{background:rgba(139,92,246,0.15);color:var(--purple)}
+.pex-btn.release{background:rgba(239,68,68,0.1);color:var(--red)}
+.contract-info{background:var(--bg3);padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px}
+.contract-row{display:flex;justify-content:space-between;margin-bottom:4px}
+.contract-row:last-child{margin-bottom:0}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.mdc{background:var(--bg2);border-radius:20px;padding:20px;width:100%;max-width:340px;text-align:center;border:1px solid var(--bg3);max-height:90vh;overflow-y:auto}
+.md-t{font-size:18px;font-weight:700;margin-bottom:4px}
+.md-s{color:var(--txt3);font-size:12px;margin-bottom:16px}
+.md-b{width:100%;padding:14px;margin-bottom:8px;border:2px solid var(--bg3);border-radius:12px;background:var(--bg1);cursor:pointer;text-align:left}
+.md-b:active{transform:scale(0.98);border-color:var(--blue)}
+.md-bh{display:flex;align-items:center;gap:10px}
+.md-bi{font-size:24px}
+.md-bt{font-size:14px;font-weight:700;color:#fff}
+.md-bd{font-size:10px;color:var(--txt3);margin-left:34px;margin-top:2px}
+.md-btn{width:100%;padding:12px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-top:6px}
+.md-btn.pri{background:var(--blue);color:#fff}
+.md-btn.sec{background:var(--bg3);color:#fff}
+.md-btn.grn{background:var(--green);color:#fff}
+.md-btn.red{background:var(--red);color:#fff}
+.md-btn.pur{background:var(--purple);color:#fff}
+.spd-s{margin:12px 0;padding:12px;background:var(--bg1);border-radius:10px}
+.spd-t{font-size:11px;color:var(--txt3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.spd-o{display:flex;gap:6px}
+.spd-b{flex:1;padding:8px;border:2px solid var(--bg3);border-radius:8px;background:transparent;color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer}
+.spd-b.act{border-color:var(--blue);background:rgba(59,130,246,0.1);color:var(--blue)}
+.live{min-height:100vh;background:linear-gradient(180deg,#0F172A,#1E293B);display:flex;flex-direction:column}
+.lhdr{padding:12px;text-align:center;border-bottom:1px solid var(--bg3)}
+.lper{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--yellow);font-weight:700;text-transform:uppercase;letter-spacing:2px;background:rgba(245,158,11,0.1);padding:4px 10px;border-radius:16px;margin-bottom:6px}
+.lper .dot{width:6px;height:6px;background:var(--yellow);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.ltim{font-size:44px;font-weight:900}
+.lscc{display:flex;align-items:center;justify-content:center;padding:16px;gap:12px}
+.ltm{text-align:center;flex:1}
+.ltm .tm-l{width:48px;height:48px;margin:0 auto 6px;font-size:16px}
+.ltmn{font-size:12px;font-weight:600}
+.lsc{text-align:center;min-width:100px}
+.lscn{font-size:44px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:6px}
+.lscn .div{color:var(--txt3);font-size:32px}
+.pstb{display:flex;justify-content:space-around;padding:10px;background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.pst{text-align:center}
+.pst-v{font-size:16px;font-weight:700}
+.pst-l{font-size:8px;color:var(--txt3);text-transform:uppercase}
+.comc{flex:1;overflow-y:auto;padding:10px 12px}
+.comi{display:flex;gap:8px;margin-bottom:10px;animation:slin .3s ease-out}
+@keyframes slin{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.comt{font-size:10px;font-weight:700;color:var(--yellow);min-width:32px;padding-top:2px}
+.comtx{font-size:12px;color:var(--txt2);line-height:1.3}
+.comi.goal{background:linear-gradient(90deg,rgba(16,185,129,0.15),transparent);padding:10px;margin:-10px -12px 10px -12px;padding-left:12px;border-left:3px solid var(--green)}
+.comi.goal .comtx{font-weight:700;color:var(--green);font-size:13px}
+.comi.goal-against{background:linear-gradient(90deg,rgba(239,68,68,0.15),transparent);padding:10px;margin:-10px -12px 10px -12px;padding-left:12px;border-left:3px solid var(--red)}
+.comi.goal-against .comtx{color:var(--red);font-size:13px}
+.comi.penalty{background:linear-gradient(90deg,rgba(245,158,11,0.1),transparent);padding:8px;margin:-8px -12px 10px -12px;padding-left:12px;border-left:3px solid var(--yellow)}
+.comi.ppgoal{background:linear-gradient(90deg,rgba(139,92,246,0.15),transparent);padding:10px;margin:-10px -12px 10px -12px;padding-left:12px;border-left:3px solid var(--purple)}
+.comi.ppgoal .comtx{font-weight:700;color:var(--purple);font-size:13px}
+.comi.period-break{background:var(--bg2);padding:12px;margin:6px -12px;text-align:center;border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
+.comi.period-break .comtx{color:#fff;font-weight:700;font-size:14px}
+.comi.save .comtx{color:var(--blue)}
+.comi.chance .comtx{color:var(--yellow)}
+.lctl{padding:10px 12px;border-top:1px solid var(--bg3);background:var(--bg2)}
+.lctl-r{display:flex;gap:8px}
+.ctl-b{flex:1;padding:12px;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.ctl-b.pri{background:var(--blue);color:#fff}
+.ctl-b.sec{background:var(--bg3);color:#fff}
+.ctl-b.suc{background:var(--green);color:#fff}
+.spd-c{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px}
+.spd-lb{font-size:10px;color:var(--txt3)}
+.spd-i{display:flex;gap:4px}
+.spd-d{width:8px;height:8px;border-radius:50%;background:var(--bg3);cursor:pointer}
+.spd-d.act{background:var(--blue)}
+.brk{padding:20px;text-align:center}
+.brk-t{font-size:20px;font-weight:900;margin-bottom:6px}
+.brk-s{color:var(--txt3);font-size:12px;margin-bottom:20px}
+.brk-st{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-bottom:20px}
+.brk-ts{text-align:center}
+.brk-tn{font-size:11px;color:var(--txt3);margin-bottom:6px}
+.brk-sr{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px}
+.brk-sv{font-size:16px;font-weight:700;min-width:24px}
+.brk-sl{font-size:10px;color:var(--txt3)}
+.brk-dv{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.brk-vs{font-size:10px;color:var(--txt3)}
+.res-i{width:70px;height:70px;border-radius:35px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:36px}
+.res-i.win{background:rgba(16,185,129,0.2)}
+.res-i.loss{background:rgba(239,68,68,0.2)}
+.res-t{font-size:20px;font-weight:700;margin-bottom:12px}
+.res-sc{font-size:40px;font-weight:900;margin-bottom:12px}
+.res-d{display:flex;justify-content:center;gap:20px;margin-bottom:16px}
+.res-di{text-align:center}
+.res-dv{font-size:18px;font-weight:700}
+.res-dl{font-size:9px;color:var(--txt3);text-transform:uppercase}
+.tbl{width:100%;border-collapse:collapse;font-size:10px}
+.tbl th{font-size:8px;font-weight:600;color:var(--txt3);text-transform:uppercase;padding:8px 3px;text-align:center;background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.tbl th:nth-child(2){text-align:left}
+.tbl td{padding:8px 3px;text-align:center;border-bottom:1px solid var(--bg3)}
+.tbl tr.usr{background:rgba(59,130,246,0.15)}
+.tc{display:flex;align-items:center;gap:4px}
+.ml{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:700;flex-shrink:0}
+.pg{color:var(--green)}.pb{color:var(--blue)}.py{color:var(--yellow)}.pr{color:var(--red)}
+.schc{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--bg3)}
+.schc.cur{border-color:var(--blue);background:rgba(59,130,246,0.08)}
+.schc.past{opacity:0.5}
+.schh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.schw{font-size:10px;color:var(--txt3);font-weight:600}
+.locb{padding:3px 6px;border-radius:8px;font-size:9px;font-weight:600}
+.locb.home{background:rgba(16,185,129,0.15);color:var(--green)}
+.locb.away{background:rgba(100,116,139,0.15);color:var(--txt3)}
+.scht{display:flex;justify-content:space-between;align-items:center}
+.schtm{font-size:12px;font-weight:600}
+.schsc{font-size:18px;font-weight:700}
+.schvs{font-size:11px;color:var(--txt3)}
+.nxtb{background:rgba(59,130,246,0.15);padding:3px 10px;border-radius:8px;font-size:10px;color:var(--blue);font-weight:600}
+.sign-b{padding:6px 10px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
+.sign-b.av{background:var(--green);color:#fff}
+.sign-b.un{background:var(--bg3);color:var(--txt3);cursor:not-allowed}
+.sign-b.loan{background:var(--purple);color:#fff}
+.ref-b{background:var(--bg3);border:none;color:#fff;padding:8px 12px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer}
+/* Finance Section */
+.fin-card{background:var(--bg2);border-radius:12px;padding:14px;margin:10px;border:1px solid var(--bg3)}
+.fin-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fin-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)}
+.fin-row:last-child{border-bottom:none}
+.fin-label{font-size:12px;color:var(--txt2)}
+.fin-value{font-size:12px;font-weight:600}
+.fin-total{background:var(--bg1);padding:10px;border-radius:8px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.fin-total-label{font-size:13px;font-weight:600}
+.fin-total-value{font-size:18px;font-weight:700}
+/* Tactics Section */
+.tac-card{background:var(--bg2);border-radius:12px;padding:14px;margin:10px;border:1px solid var(--bg3)}
+.tac-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.tac-options{display:flex;gap:8px;margin-bottom:12px}
+.tac-opt{flex:1;padding:10px 8px;border:2px solid var(--bg3);border-radius:8px;background:transparent;cursor:pointer;text-align:center}
+.tac-opt.act{border-color:var(--blue);background:rgba(59,130,246,0.1)}
+.tac-opt-icon{font-size:20px;margin-bottom:4px}
+.tac-opt-name{font-size:10px;font-weight:600;color:var(--txt)}
+.tac-opt-desc{font-size:8px;color:var(--txt3);margin-top:2px}
+.tac-info{background:var(--bg1);padding:10px;border-radius:8px;font-size:11px;color:var(--txt2)}
+/* Training Modal */
+.train-stat{display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg1);border-radius:8px;margin-bottom:8px}
+.train-stat-name{font-size:12px;font-weight:600}
+.train-stat-val{display:flex;align-items:center;gap:8px}
+.train-stat-cur{font-size:16px;font-weight:700}
+.train-stat-btn{width:32px;height:32px;border:none;border-radius:6px;background:var(--cyan);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.train-stat-btn:disabled{background:var(--bg3);cursor:not-allowed}
+.train-cost{text-align:center;padding:10px;background:rgba(6,182,212,0.1);border-radius:8px;margin-top:10px}
+.train-cost-label{font-size:10px;color:var(--txt3)}
+.train-cost-value{font-size:18px;font-weight:700;color:var(--cyan)}
+/* Contract Modal */
+.cont-info{background:var(--bg1);padding:12px;border-radius:8px;margin-bottom:12px}
+.cont-row{display:flex;justify-content:space-between;margin-bottom:6px}
+.cont-row:last-child{margin-bottom:0}
+.cont-label{font-size:11px;color:var(--txt3)}
+.cont-value{font-size:11px;font-weight:600}
+.cont-slider{width:100%;margin:10px 0}
+.cont-offer{background:var(--bg2);padding:12px;border-radius:8px;border:1px solid var(--bg3)}
+.cont-offer-title{font-size:12px;font-weight:600;margin-bottom:8px}
+/* Loan Section */
+.loan-card{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--purple)}
+.loan-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.loan-team{font-size:11px;color:var(--purple);font-weight:600}
+.loan-duration{font-size:10px;color:var(--txt3)}
+.loan-player{display:flex;align-items:center;gap:10px}
+.tabs-cont{display:flex;border-bottom:1px solid var(--bg3);padding:0 10px;background:var(--bg2)}
+.tab-btn{flex:1;padding:10px;border:none;background:none;color:var(--txt3);font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent}
+.tab-btn.act{color:var(--blue);border-bottom-color:var(--blue)}
+</style>
 </head>
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-  
-  <script>
-    // Vymaž všechny Service Workers
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-          registration.unregister();
-        }
-      });
-      
-      // Registruj nový Service Worker
-      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-        registration.update();
-      });
-    }
-    
-    // Vymaž všechny cache
-    if ('caches' in window) {
-      caches.keys().then(function(names) {
-        for (let name of names) caches.delete(name);
-      });
-    }
-  </script>
+<div class="app" id="app"></div>
+<script>
+const T=[{id:'sparta',n:'HC Sparta Praha',c:'Praha',cl:'#C8102E',b:85e6},{id:'trinec',n:'HC Oceláři Třinec',c:'Třinec',cl:'#E31837',b:90e6},{id:'pardubice',n:'HC Dynamo Pardubice',c:'Pardubice',cl:'#FF0000',b:70e6},{id:'liberec',n:'Bílí Tygři Liberec',c:'Liberec',cl:'#1E3A8A',b:65e6},{id:'brno',n:'HC Kometa Brno',c:'Brno',cl:'#003087',b:75e6},{id:'boleslav',n:'BK Mladá Boleslav',c:'Mladá Boleslav',cl:'#00A651',b:55e6},{id:'plzen',n:'HC Škoda Plzeň',c:'Plzeň',cl:'#0033A0',b:60e6},{id:'mountfield',n:'Mountfield HK',c:'Hradec Králové',cl:'#E4002B',b:58e6},{id:'litvinov',n:'HC Verva Litvínov',c:'Litvínov',cl:'#FFD100',b:50e6},{id:'olomouc',n:'HC Olomouc',c:'Olomouc',cl:'#003DA5',b:45e6},{id:'vitkovice',n:'HC Vítkovice Ridera',c:'Ostrava',cl:'#003087',b:52e6},{id:'kladno',n:'Rytíři Kladno',c:'Kladno',cl:'#1E3A8A',b:40e6},{id:'motor',n:'Motor České Budějovice',c:'České Budějovice',cl:'#000080',b:48e6},{id:'vary',n:'HC Energie Karlovy Vary',c:'Karlovy Vary',cl:'#FFD700',b:42e6}];
+const FN=['Jakub','David','Martin','Tomáš','Lukáš','Jan','Petr','Filip','Ondřej','Adam','Michal','Daniel','Marek','Pavel','Jiří','Dominik'];
+const LN=['Voráček','Pastrňák','Krejčí','Hertl','Nečas','Hronek','Chytil','Zacha','Vrána','Kämpf','Šimek','Gudas','Kovář','Plekanec','Červenka','Frolík'];
+const C={start:['Rozhodčí vhazuje puk!','Úvodní buly, jedeme!','Puk padá na led!'],end:['Závěrečná siréna!','Je dobojováno!','Konec zápasu!'],pstart:['Začíná {p}. třetina!','{p}. třetina zahájena!'],pend:['Siréna! Konec {p}. třetiny.','Stav po {p}. třetině: {s}'],ot:['Jdeme do prodloužení!','Prodloužení!'],goal:['🚨 GÓÓÓL! {pl} skóruje! {s}','🚨 BRANKA! {pl}! {s}','🚨 {pl} dává gól! {s}'],goalA:['Inkasujeme... {pl} z {op}. {s}','Gól pro {op}. {s}'],ppgoal:['⚡ PŘESILOVKA! {pl}! {s}'],shgoal:['💪 OSLABENÍ! {pl}! {s}'],shot:['{pl} střílí! {r}','Rána {pl}! {r}'],shotR:['Chytá!','Vedle!','Zablokováno!','Nad!'],chance:['😱 Šance! {pl}! {r}','😱 {pl} sám! {r}'],chanceR:['TYČKA!','Zákrok!','Břevno!','Lapačka!'],save:['Zákrok {gl}!','{gl} chytá!'],hit:['{pl} tvrdě!','Bodyček {pl}!'],penalty:['🟡 {pl} - {rs}. 2 min!','🟡 Faul {pl}!'],penR:['sekání','hákování','držení','podražení'],ppstart:['⚡ {tm} přesilovka!'],ppend:['Konec přesilovky.'],icing:['❄️ Icing!'],offside:['🚫 Ofsajd!'],poss:['{tm} útočí.','{pl} kombinuje.'],crowd:['👏 Fanoušci!'],tension:['Napětí!']};
+const TACTICS={offensive:{name:'Útočná',icon:'⚔️',desc:'Více střel, méně obrany',shotMod:1.3,defMod:0.8},balanced:{name:'Vyvážená',icon:'⚖️',desc:'Rovnováha útoku a obrany',shotMod:1,defMod:1},defensive:{name:'Defenzivní',icon:'🛡️',desc:'Méně gólů, méně šancí',shotMod:0.7,defMod:1.3}};
+let gs={started:false,team:null,roster:[],budget:50e6,happiness:70,week:1,standings:[],schedule:[],market:[],loansIn:[],loansOut:[],tactic:'balanced',finances:{income:{tickets:0,merch:0,sponsor:0,tv:0},expenses:{salaries:0,stadium:0,travel:0,training:0}}};
+let tab='roster',subTab='roster',expP=null,showMode=false,showLive=false,showBreak=false,showRes=false,showTrain=null,showContract=null,showLoan=null,speed='normal',ls=null,mInt=null,lastRes=null;
+const pk=a=>a[Math.floor(Math.random()*a.length)];
+const fmt=a=>a>=1e6?`${(a/1e6).toFixed(1)}M`:a>=1e3?`${Math.floor(a/1e3)}K`:a;
+const rc=r=>r>=85?'r85':r>=75?'r75':r>=65?'r65':r>=55?'r55':'rlo';
+const pc=p=>p==='G'?'G':p==='D'?'D':'F';
+const spd=()=>({slow:1200,normal:700,fast:300})[speed];
+function gP(pos,q='normal'){const b=q==='star'?80:q==='prospect'?55:65,v=15,o=Math.min(99,Math.max(40,Math.floor(b+(Math.random()-0.5)*v)));const contractYears=Math.floor(Math.random()*3)+1;return{id:Math.random().toString(36).substr(2,9),f:pk(FN),l:pk(LN),pos,age:pos==='G'?Math.floor(Math.random()*15)+22:Math.floor(Math.random()*18)+18,o,pot:Math.min(99,Math.floor(b+10+Math.random()*15)),sk:Math.floor(b+(Math.random()-0.5)*v),sh:Math.floor(b+(Math.random()-0.5)*v),pa:Math.floor(b+(Math.random()-0.5)*v),de:Math.floor(b+(Math.random()-0.5)*v),ph:Math.floor(b+(Math.random()-0.5)*v),sal:Math.floor(o*50000+Math.random()*2e6),en:100,g:0,a:0,pm:0,gp:0,cYears:contractYears,cSigned:1,moral:70+Math.floor(Math.random()*20),onLoan:false,loanFrom:null};}
+function gR(){const r=[];r.push(gP('G','star'));r.push(gP('G'));for(let i=0;i<6;i++)r.push(gP('D',i<2?'star':'normal'));for(let i=0;i<12;i++)r.push(gP(['LW','C','RW'][i%3],i<3?'star':i<6?'normal':'prospect'));return r;}
+const iSt=()=>T.map(t=>({...t,pl:0,w:0,l:0,otW:0,otL:0,gf:0,ga:0,pts:0}));
+const gSch=()=>Array.from({length:52},(_,i)=>{const op=T.filter(t=>t.id!==gs.team?.id)[Math.floor(Math.random()*13)];return{wk:i+1,op:op.n,opC:op.cl,home:Math.random()>0.5,done:false};});
+const gM=()=>Array.from({length:12},()=>{const p=gP(pk(['G','D','D','LW','C','RW']),Math.random()>0.7?'star':'normal');p.pr=Math.floor(p.sal*(3+Math.random()*2));p.forLoan=Math.random()>0.6;p.loanFee=Math.floor(p.sal*0.3);return p;});
+const cInc=()=>Math.floor(150000*(1+gs.happiness/200)*(TACTICS[gs.tactic].shotMod*0.5+0.5));
+const save=()=>localStorage.setItem('hm5',JSON.stringify(gs));
+const load=()=>{const s=localStorage.getItem('hm5');if(s){gs={...gs,...JSON.parse(s)};return true;}return false;};
+function calcFinances(){const wSal=gs.roster.reduce((s,p)=>s+(p.onLoan?0:p.sal),0)/52;const loanInc=gs.loansOut.reduce((s,l)=>s+l.fee/52,0);const loanExp=gs.loansIn.reduce((s,l)=>s+l.fee/52,0);gs.finances={income:{tickets:gs.schedule[gs.week-1]?.home?cInc():0,merch:Math.floor(20000*(gs.happiness/100)),sponsor:50000,tv:30000,loans:Math.floor(loanInc)},expenses:{salaries:Math.floor(wSal),stadium:10000,travel:gs.schedule[gs.week-1]?.home?0:15000,training:5000,loans:Math.floor(loanExp)}};}
+function stG(tm){gs.team=tm;gs.budget=tm.b;gs.roster=gR();gs.standings=iSt();gs.schedule=gSch();gs.market=gM();gs.loansIn=[];gs.loansOut=[];gs.tactic='balanced';gs.started=true;calcFinances();save();render();}
+function shMode(){showMode=true;render();}
+function stMatch(wC){showMode=false;wC?stLive():qSim();}
+function stLive(){const m=gs.schedule[gs.week-1],gl=gs.roster.find(p=>p.pos==='G'&&!p.onLoan);ls={p:1,t:0,tG:0,oG:0,cm:[],dn:false,m,ps:false,gn:gl?`${gl.f.charAt(0)}. ${gl.l}`:'Brankář',st:{tm:{sh:0,sv:0,ht:0,pn:0},op:{sh:0,sv:0,ht:0,pn:0}},pSt:[],pp:null,ev:gEv()};showLive=true;addC('start',pk(C.start));render();mInt=setInterval(upLive,spd());}
+function gEv(){const ev=[],actRoster=gs.roster.filter(p=>!p.onLoan),tS=actRoster.reduce((s,p)=>s+p.o,0)/actRoster.length,oS=65+Math.random()*20,m=gs.schedule[gs.week-1],hb=m.home?5:0,tac=TACTICS[gs.tactic];for(let p=1;p<=3;p++){for(let i=0;i<15+Math.floor(Math.random()*10);i++){const t=Math.floor(Math.random()*1200),r=Math.random();const goalChance=0.08*tac.shotMod/tac.defMod;if(r<goalChance){const isT=Math.random()<(tS+hb)/(tS+hb+oS);ev.push({p,t,ty:isT?'goal':'goalA'});}else if(r<0.2*tac.shotMod)ev.push({p,t,ty:'shot'});else if(r<0.28*tac.shotMod)ev.push({p,t,ty:'chance'});else if(r<0.36)ev.push({p,t,ty:'save'});else if(r<0.46)ev.push({p,t,ty:'hit'});else if(r<0.52)ev.push({p,t,ty:'penalty'});else if(r<0.56)ev.push({p,t,ty:'icing'});else if(r<0.60)ev.push({p,t,ty:'offside'});else if(r<0.70)ev.push({p,t,ty:'poss'});else ev.push({p,t,ty:'crowd'});}}return ev.sort((a,b)=>(a.p*1200+a.t)-(b.p*1200+b.t));}
+function upLive(){if(!ls||ls.dn||ls.ps)return;ls.t+=12;if(ls.pp){const tot=(ls.p-1)*1200+ls.t;if(tot>=ls.pp.end){addC('ppend',pk(C.ppend));ls.pp=null;}}if(ls.t>=1200){hPEnd();return;}const ct=(ls.p-1)*1200+ls.t;ls.ev.filter(e=>(e.p-1)*1200+e.t<=ct&&(e.p-1)*1200+e.t>ct-12).forEach(procEv);if(ls.p===4&&ls.t>=300&&Math.random()<0.2){const isT=Math.random()<0.55;procEv({ty:isT?'goal':'goalA',p:4,t:ls.t});}if(ls.p===4&&ls.tG!==ls.oG){finM();return;}render();}
+function hPEnd(){ls.pSt.push({p:ls.p,tm:{...ls.st.tm},op:{...ls.st.op},sc:{t:ls.tG,o:ls.oG}});const sc=`${ls.tG}:${ls.oG}`;addC('period-break',pk(C.pend).replace('{p}',ls.p).replace('{s}',sc));if(ls.p<3){ls.ps=true;showBreak=true;clearInterval(mInt);render();}else if(ls.tG===ls.oG){addC('ot',pk(C.ot));ls.p=4;ls.t=0;render();}else finM();}
+function contP(){showBreak=false;ls.p++;ls.t=0;ls.ps=false;ls.st.tm={sh:0,sv:0,ht:0,pn:0};ls.st.op={sh:0,sv:0,ht:0,pn:0};addC('pstart',pk(C.pstart).replace('{p}',ls.p));mInt=setInterval(upLive,spd());render();}
+function procEv(ev){const pls=gs.roster.filter(p=>p.pos!=='G'&&!p.onLoan),pl=pk(pls)||{f:'Hráč',l:''},pn=`${pl.f} ${pl.l}`,tn=gs.team.n.split(' ').pop(),on=ls.m.op.split(' ').pop(),sc=`${ls.tG}:${ls.oG}`;switch(ev.ty){case'goal':ls.tG++;ls.st.tm.sh++;const ns=`${ls.tG}:${ls.oG}`;if(ls.pp?.tm==='tm'){addC('ppgoal',pk(C.ppgoal).replace('{pl}',pn).replace('{s}',ns));ls.pp=null;}else if(ls.pp?.tm==='op'){addC('goal',pk(C.shgoal).replace('{pl}',pn).replace('{s}',ns));}else{addC('goal',pk(C.goal).replace('{pl}',pn).replace('{s}',ns));}break;case'goalA':ls.oG++;ls.st.op.sh++;addC('goal-against',pk(C.goalA).replace('{pl}',`${pk(FN)} ${pk(LN)}`).replace('{op}',on).replace('{s}',`${ls.tG}:${ls.oG}`));if(ls.pp?.tm==='tm')ls.pp=null;break;case'shot':ls.st.tm.sh++;addC('shot',pk(C.shot).replace('{pl}',pn).replace('{r}',pk(C.shotR)));break;case'chance':ls.st.tm.sh++;addC('chance',pk(C.chance).replace('{pl}',pn).replace('{r}',pk(C.chanceR)));break;case'save':ls.st.tm.sv++;addC('save',pk(C.save).replace('{gl}',ls.gn));break;case'hit':ls.st.tm.ht++;addC('hit',pk(C.hit).replace('{pl}',pn));break;case'penalty':const isTP=Math.random()<0.5;if(isTP){ls.st.tm.pn++;addC('penalty',pk(C.penalty).replace('{pl}',pn).replace('{rs}',pk(C.penR)));ls.pp={tm:'op',end:(ls.p-1)*1200+ls.t+120};setTimeout(()=>addC('ppstart',pk(C.ppstart).replace('{tm}',on)),50);}else{ls.st.op.pn++;addC('penalty',pk(C.penalty).replace('{pl}',`${pk(FN)} ${pk(LN)}`).replace('{rs}',pk(C.penR)));ls.pp={tm:'tm',end:(ls.p-1)*1200+ls.t+120};setTimeout(()=>addC('ppstart',pk(C.ppstart).replace('{tm}',tn)),50);}break;case'icing':addC('icing',pk(C.icing));break;case'offside':addC('offside',pk(C.offside));break;case'poss':addC('poss',pk(C.poss).replace('{tm}',tn).replace('{pl}',pn));break;case'crowd':addC('crowd',pk(C.crowd));break;}}
+function addC(ty,tx){const m=Math.floor(ls.t/60),s=ls.t%60;ls.cm.unshift({ty,tx,ts:`${m}:${String(s).padStart(2,'0')}`,p:ls.p});if(ls.cm.length>50)ls.cm.pop();}
+function finM(){clearInterval(mInt);ls.dn=true;addC('end',pk(C.end));let res,pts;if(ls.tG>ls.oG){res=ls.p>3?'Výhra v prodl.':'Výhra';pts=ls.p>3?2:3;}else{res=ls.p>3?'Prohra v prodl.':'Prohra';pts=ls.p>3?1:0;}apRes(ls.tG,ls.oG,res,pts);render();}
+function skipM(){clearInterval(mInt);while(ls.p<=3&&!ls.dn){ls.t=1200;if(ls.p<3){ls.p++;ls.t=0;}else break;}if(ls.tG===ls.oG){Math.random()>0.5?ls.tG++:ls.oG++;ls.p=4;}finM();}
+function closeLive(){showLive=false;showBreak=false;ls=null;showRes=true;render();}
+function chSpd(s){speed=s;if(mInt){clearInterval(mInt);mInt=setInterval(upLive,spd());}render();}
+function qSim(){if(gs.week>52)return;const m=gs.schedule[gs.week-1],actRoster=gs.roster.filter(p=>!p.onLoan),tS=actRoster.reduce((s,p)=>s+p.o,0)/actRoster.length,oS=65+Math.random()*20,hb=m.home?5:0,tac=TACTICS[gs.tactic];let tG=Math.floor(Math.random()*4+((tS+hb)/30)*tac.shotMod),oG=Math.floor(Math.random()*4+(oS/30)/tac.defMod),res,pts;if(tG>oG){res='Výhra';pts=3;}else if(tG<oG){res='Prohra';pts=0;}else{Math.random()>0.5?(tG++,res='Výhra v prodl.',pts=2):(oG++,res='Prohra v prodl.',pts=1);}apRes(tG,oG,res,pts);showRes=true;render();}
+function apRes(tG,oG,res,pts){const m=gs.schedule[gs.week-1];gs.roster=gs.roster.map(p=>{if(p.onLoan)return p;if(Math.random()>0.3){const g=p.pos!=='G'?Math.floor(Math.random()*(tG/3)):0,a=p.pos!=='G'?Math.floor(Math.random()*(tG/2)):0;return{...p,gp:p.gp+1,g:p.g+g,a:p.a+a,pm:p.pm+(tG-oG),en:Math.max(30,p.en-15+Math.random()*10),moral:Math.min(100,Math.max(20,p.moral+(pts>=2?2:-1)))};}return p;});gs.schedule[gs.week-1]={...m,done:true,res:`${tG}:${oG} ${res}`,tG,oG};gs.standings=gs.standings.map(t=>{if(t.id===gs.team.id)return{...t,pl:t.pl+1,w:t.w+(pts===3?1:0),otW:t.otW+(pts===2?1:0),otL:t.otL+(pts===1?1:0),l:t.l+(pts===0?1:0),gf:t.gf+tG,ga:t.ga+oG,pts:t.pts+pts};const sp=Math.floor(Math.random()*4);return{...t,pl:t.pl+1,w:t.w+(sp===3?1:0),pts:t.pts+sp};}).sort((a,b)=>b.pts-a.pts);calcFinances();const totInc=Object.values(gs.finances.income).reduce((a,b)=>a+b,0);const totExp=Object.values(gs.finances.expenses).reduce((a,b)=>a+b,0);gs.budget+=totInc-totExp;gs.happiness=pts>=2?Math.min(100,gs.happiness+3):Math.max(0,gs.happiness-2);gs.roster=gs.roster.map(p=>({...p,en:Math.min(100,p.en+10)}));checkContracts();checkLoans();lastRes={tG,oG,res,pts,inc:totInc,exp:totExp,m:gs.schedule[gs.week-1]};gs.week++;save();}
+function checkContracts(){if(gs.week%13===0){gs.roster=gs.roster.map(p=>{if(p.onLoan)return p;const newSigned=p.cSigned+0.25;if(newSigned>=p.cYears){p.cYears=0;}return{...p,cSigned:newSigned};});}}
+function checkLoans(){gs.loansIn=gs.loansIn.filter(l=>{l.weeksLeft--;if(l.weeksLeft<=0){gs.roster=gs.roster.filter(p=>p.id!==l.player.id);return false;}return true;});gs.loansOut=gs.loansOut.filter(l=>{l.weeksLeft--;if(l.weeksLeft<=0){const p=gs.roster.find(r=>r.id===l.player.id);if(p)p.onLoan=false;return false;}return true;});}
+function trainPlayer(pid,stat){const p=gs.roster.find(x=>x.id===pid);if(!p)return;const cost=Math.floor(p[stat]*10000);if(gs.budget<cost)return;if(p[stat]>=p.pot)return;gs.budget-=cost;p[stat]=Math.min(p.pot,p[stat]+1);p.o=Math.floor((p.sk+p.sh+p.pa+p.de+p.ph)/5);gs.finances.expenses.training+=cost;save();render();}
+function extendContract(pid,years,salaryMod){const p=gs.roster.find(x=>x.id===pid);if(!p)return;const newSal=Math.floor(p.sal*salaryMod);const signingBonus=Math.floor(newSal*0.2*years);if(gs.budget<signingBonus)return;gs.budget-=signingBonus;p.sal=newSal;p.cYears=years;p.cSigned=0;p.moral=Math.min(100,p.moral+10);showContract=null;save();render();}
+function loanOut(pid){const p=gs.roster.find(x=>x.id===pid);if(!p||p.onLoan)return;const team=pk(T.filter(t=>t.id!==gs.team.id));const fee=Math.floor(p.sal*0.3);const weeks=Math.floor(Math.random()*12)+8;p.onLoan=true;gs.loansOut.push({player:p,team:team.n,fee,weeksLeft:weeks});showLoan=null;save();render();}
+function loanIn(mid){const mp=gs.market.find(x=>x.id===mid);if(!mp||!mp.forLoan||gs.budget<mp.loanFee*4)return;const p={...mp,onLoan:false,loanFrom:pk(T.filter(t=>t.id!==gs.team.id)).n,gp:0,g:0,a:0,pm:0};gs.roster.push(p);gs.loansIn.push({player:p,team:p.loanFrom,fee:mp.loanFee,weeksLeft:Math.floor(Math.random()*12)+8});gs.budget-=mp.loanFee*4;gs.market=gs.market.filter(x=>x.id!==mid);save();render();}
+function relP(id){const p=gs.roster.find(x=>x.id===id);if(!p)return;const penalty=p.cYears>p.cSigned?Math.floor(p.sal*(p.cYears-p.cSigned)):0;if(confirm(`Propustit ${p.f} ${p.l}?\n${penalty>0?`Odstupné za předčasné ukončení: ${fmt(penalty)} Kč`:''}`)){gs.budget-=penalty;gs.roster=gs.roster.filter(x=>x.id!==id);expP=null;save();render();}}
+function signP(id){const p=gs.market.find(x=>x.id===id);if(!p||gs.budget<p.pr||gs.roster.length>=25)return;gs.budget-=p.pr;gs.roster.push({...p,gp:0,g:0,a:0,pm:0,onLoan:false,loanFrom:null});gs.market=gs.market.filter(x=>x.id!==id);save();render();}
+function setTactic(t){gs.tactic=t;save();render();}
+function render(){const app=document.getElementById('app');if(showLive&&ls){app.innerHTML=showBreak?rBreak():rLive();}else if(showMode){app.innerHTML=rMode();}else if(showTrain){app.innerHTML=rTrainModal();}else if(showContract){app.innerHTML=rContractModal();}else if(showLoan){app.innerHTML=rLoanModal();}else if(!gs.started){app.innerHTML=rSel();}else{app.innerHTML=`${rHdr()}<div class="cnt">${rTab()}</div>${rNav()}${showRes?rRes():''}`;}bindEv();}
+function rSel(){return`<div class="sel"><div class="logo-c">🏒</div><h1 class="title">HOKEJ MANAŽER</h1><p class="sub">ČESKÁ EXTRALIGA 2024/25</p><div class="badges"><span class="badge r">14 týmů</span><span class="badge b">52 kol</span><span class="badge g">Pro verze</span></div><h2 class="sec-t">Vyber svůj tým</h2><div class="grid">${T.map(t=>`<div class="tmc" data-tid="${t.id}"><div class="tm-l" style="background:${t.cl}">${t.n.split(' ').pop().substring(0,2).toUpperCase()}</div><div class="nm">${t.n.split(' ').pop()}</div><div class="ct">${t.c}</div><div class="bg">${fmt(t.b)} Kč</div></div>`).join('')}</div></div>`;}
+function rMode(){const m=gs.schedule[gs.week-1];return`<div class="modal"><div class="mdc"><div class="md-t">🏒 ${gs.week}. kolo</div><div class="md-s">${gs.team.n} vs ${m.op}</div><button class="md-b" id="qBtn"><div class="md-bh"><div class="md-bi">⚡</div><div class="md-bt">Rychlá simulace</div></div><div class="md-bd">Okamžitý výsledek</div></button><button class="md-b" id="cBtn"><div class="md-bh"><div class="md-bi">📺</div><div class="md-bt">S komentářem</div></div><div class="md-bd">Živý přenos</div></button><div class="spd-s"><div class="spd-t">⏱️ Rychlost</div><div class="spd-o"><button class="spd-b ${speed==='slow'?'act':''}" data-spd="slow">🐢</button><button class="spd-b ${speed==='normal'?'act':''}" data-spd="normal">🏃</button><button class="spd-b ${speed==='fast'?'act':''}" data-spd="fast">🚀</button></div></div><button class="md-b" id="canBtn" style="background:var(--bg3);border-color:transparent"><div class="md-bt" style="text-align:center;margin:0">← Zpět</div></button></div></div>`;}
+function rTrainModal(){const p=gs.roster.find(x=>x.id===showTrain);if(!p)return'';const stats=[{k:'sk',n:'Bruslení'},{k:'sh',n:'Střelba'},{k:'pa',n:'Přihrávky'},{k:'de',n:'Obrana'},{k:'ph',n:'Fyzička'}];return`<div class="modal"><div class="mdc"><div class="md-t">🏋️ Trénink</div><div class="md-s">${p.f} ${p.l} • Potenciál: ${p.pot}</div>${stats.map(s=>{const cost=Math.floor(p[s.k]*10000);const canTrain=gs.budget>=cost&&p[s.k]<p.pot;return`<div class="train-stat"><div class="train-stat-name">${s.n}</div><div class="train-stat-val"><span class="train-stat-cur ${rc(p[s.k])}">${Math.round(p[s.k])}</span><button class="train-stat-btn" data-train="${s.k}" ${canTrain?'':`disabled`}>+</button></div></div>`;}).join('')}<div class="train-cost"><div class="train-cost-label">Cena za +1 bod</div><div class="train-cost-value">${fmt(Math.floor(p.o*10000))} Kč</div></div><button class="md-btn sec" id="closeTrainBtn">Zavřít</button></div></div>`;}
+function rContractModal(){const p=gs.roster.find(x=>x.id===showContract);if(!p)return'';const remaining=Math.max(0,p.cYears-p.cSigned);return`<div class="modal"><div class="mdc"><div class="md-t">📝 Smlouva</div><div class="md-s">${p.f} ${p.l}</div><div class="cont-info"><div class="cont-row"><span class="cont-label">Aktuální plat</span><span class="cont-value">${fmt(p.sal)}/rok</span></div><div class="cont-row"><span class="cont-label">Zbývá</span><span class="cont-value ${remaining<1?'red':''}">${remaining.toFixed(1)} let</span></div><div class="cont-row"><span class="cont-label">Morálka</span><span class="cont-value">${p.moral}%</span></div></div><div class="md-s">Nabídka prodloužení:</div><button class="md-btn grn" data-ext="2-1">2 roky (stejný plat)</button><button class="md-btn pri" data-ext="3-1.1">3 roky (+10% plat)</button><button class="md-btn pur" data-ext="4-1.2">4 roky (+20% plat)</button><button class="md-btn sec" id="closeContBtn" style="margin-top:12px">Zavřít</button></div></div>`;}
+function rLoanModal(){const p=gs.roster.find(x=>x.id===showLoan);if(!p)return'';return`<div class="modal"><div class="mdc"><div class="md-t">🔄 Hostování</div><div class="md-s">${p.f} ${p.l}</div><div class="cont-info"><div class="cont-row"><span class="cont-label">Overall</span><span class="cont-value ${rc(p.o)}">${p.o}</span></div><div class="cont-row"><span class="cont-label">Plat</span><span class="cont-value">${fmt(p.sal)}/rok</span></div><div class="cont-row"><span class="cont-label">Příjem z hostování</span><span class="cont-value grn">~${fmt(Math.floor(p.sal*0.3))}/rok</span></div></div><p style="font-size:11px;color:var(--txt3);margin-bottom:12px">Hráč bude hostovat 8-20 týdnů. Budete dostávat poplatek za hostování.</p><button class="md-btn pur" id="confirmLoanBtn">✓ Poslat na hostování</button><button class="md-btn sec" id="closeLoanBtn">Zrušit</button></div></div>`;}
+function rLive(){const s=ls,t=gs.team,pn=['','1.','2.','3.','PRODL.'],m=Math.floor(s.t/60),sc=s.t%60;return`<div class="live"><div class="lhdr"><div class="lper">${!s.dn?'<span class="dot"></span>':''}${pn[s.p]} třetina ${s.dn?'- KONEC':''}</div><div class="ltim">${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}</div></div><div class="lscc"><div class="ltm"><div class="tm-l" style="background:${t.cl}">${t.n.split(' ').pop().substring(0,2).toUpperCase()}</div><div class="ltmn">${t.n.split(' ').pop()}</div></div><div class="lsc"><div class="lscn"><span style="color:${s.tG>s.oG?'var(--green)':'#fff'}">${s.tG}</span><span class="div">:</span><span style="color:${s.oG>s.tG?'var(--red)':'#fff'}">${s.oG}</span></div></div><div class="ltm"><div class="tm-l" style="background:${s.m.opC||'#334155'}">${s.m.op.split(' ').pop().substring(0,2).toUpperCase()}</div><div class="ltmn">${s.m.op.split(' ').pop()}</div></div></div><div class="pstb"><div class="pst"><div class="pst-v">${s.st.tm.sh}</div><div class="pst-l">Střely</div></div><div class="pst"><div class="pst-v">${s.st.tm.sv}</div><div class="pst-l">Zákroky</div></div><div class="pst"><div class="pst-v">${s.st.tm.ht}</div><div class="pst-l">Hity</div></div><div class="pst"><div class="pst-v">${s.st.tm.pn}</div><div class="pst-l">Tresty</div></div></div><div class="comc">${s.cm.map(c=>`<div class="comi ${c.ty}"><div class="comt">${c.ts}</div><div class="comtx">${c.tx}</div></div>`).join('')}</div><div class="lctl"><div class="lctl-r">${s.dn?`<button class="ctl-b suc" id="clBtn">✓ Pokračovat</button>`:`<button class="ctl-b sec" id="skBtn">⏭ Přeskočit</button>`}</div>${!s.dn?`<div class="spd-c"><span class="spd-lb">Rychlost:</span><div class="spd-i"><div class="spd-d ${speed==='slow'?'act':''}" data-spd="slow"></div><div class="spd-d ${speed==='normal'?'act':''}" data-spd="normal"></div><div class="spd-d ${speed==='fast'?'act':''}" data-spd="fast"></div></div></div>`:''}</div></div>`;}
+function rBreak(){const s=ls,t=gs.team,tSh=s.pSt.reduce((a,p)=>a+p.tm.sh,0),oSh=s.pSt.reduce((a,p)=>a+p.op.sh,0);return`<div class="live"><div class="modal" style="background:rgba(0,0,0,0.9)"><div class="mdc" style="max-width:340px"><div class="brk"><div class="brk-t">⏸️ Přestávka</div><div class="brk-s">Konec ${s.p}. třetiny • ${s.tG}:${s.oG}</div><div class="brk-st"><div class="brk-ts"><div class="brk-tn">${t.n.split(' ').pop()}</div><div class="brk-sr"><span class="brk-sv blu">${tSh}</span><span class="brk-sl">Střel</span></div><div class="brk-sr"><span class="brk-sv">${s.pSt.reduce((a,p)=>a+p.tm.ht,0)}</span><span class="brk-sl">Hitů</span></div></div><div class="brk-dv"><div style="font-size:28px;font-weight:900">${s.tG}:${s.oG}</div></div><div class="brk-ts"><div class="brk-tn">${s.m.op.split(' ').pop()}</div><div class="brk-sr"><span class="brk-sl">Střel</span><span class="brk-sv blu">${oSh}</span></div><div class="brk-sr"><span class="brk-sl">Hitů</span><span class="brk-sv">${s.pSt.reduce((a,p)=>a+p.op.ht,0)}</span></div></div></div><button class="md-btn pri" id="contBtn">▶ ${s.p+1}. třetina</button><button class="md-btn sec" id="skBrkBtn">⏭ Přeskočit</button></div></div></div></div>`;}
+function rRes(){if(!lastRes)return'';const r=lastRes,isW=r.pts>=2;return`<div class="modal"><div class="mdc"><div class="res-i ${isW?'win':'loss'}">${isW?'🏆':'😔'}</div><div class="res-t" style="color:${isW?'var(--green)':'var(--red)'}">${r.res}</div><div class="res-sc"><span style="color:${r.tG>r.oG?'var(--green)':'#fff'}">${r.tG}</span><span style="color:var(--txt3)">:</span><span style="color:${r.oG>r.tG?'var(--red)':'#fff'}">${r.oG}</span></div><div class="res-d"><div class="res-di"><div class="res-dv blu">+${r.pts}</div><div class="res-dl">Body</div></div><div class="res-di"><div class="res-dv grn">+${fmt(r.inc)}</div><div class="res-dl">Příjem</div></div><div class="res-di"><div class="res-dv red">-${fmt(r.exp)}</div><div class="res-dl">Výdaje</div></div></div><button class="md-btn pri" id="clResBtn">Pokračovat →</button></div></div>`;}
+function rHdr(){const t=gs.team;return`<div class="hdr"><div class="hdr-c"><div class="tm-i"><div class="tm-l" style="background:${t.cl}">${t.n.split(' ').pop().substring(0,2).toUpperCase()}</div><div><div class="tm-n">${t.n.split(' ').pop()}</div><div class="tm-s">Kolo ${gs.week}/52</div></div></div><div class="hdr-st"><div class="st-i"><div class="st-l">Rozpočet</div><div class="st-v ${gs.budget<0?'red':'grn'}">${fmt(gs.budget)}</div></div><div class="st-i"><div class="st-l">Fans</div><div class="st-v blu">${gs.happiness}%</div></div><button class="play-btn" id="plBtn" ${gs.week>52?'disabled':''}>▶</button></div></div></div>`;}
+function rNav(){const tabs=[{id:'roster',ic:'👥',lb:'Tým'},{id:'tactics',ic:'🎯',lb:'Taktika'},{id:'finance',ic:'💰',lb:'Finance'},{id:'standings',ic:'🏆',lb:'Tabulka'},{id:'transfers',ic:'🔄',lb:'Trh'}];return`<nav class="nav">${tabs.map(t=>`<button class="nav-b ${tab===t.id?'act':''}" data-tab="${t.id}"><span class="ic">${t.ic}</span>${t.lb}</button>`).join('')}</nav>`;}
+function rTab(){switch(tab){case'roster':return rRos();case'tactics':return rTac();case'finance':return rFin();case'standings':return rStd();case'transfers':return rTra();default:return rRos();}}
+function rRos(){const actRoster=gs.roster.filter(p=>!p.onLoan);const loanedOut=gs.roster.filter(p=>p.onLoan);const srt=[...actRoster].sort((a,b)=>{const o={G:0,D:1,LW:2,C:3,RW:4};return o[a.pos]-o[b.pos];});const tS=actRoster.reduce((s,p)=>s+p.sal,0);return`<div style="padding:8px 10px;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--txt2)">Aktivní: ${actRoster.length}/23</span><span style="color:var(--green)">Platy: ${fmt(tS)}/rok</span></div>${gs.loansIn.length>0?`<div style="padding:8px 10px;background:rgba(139,92,246,0.1);border-bottom:1px solid var(--purple)"><span style="font-size:11px;color:var(--purple)">📥 Hostující: ${gs.loansIn.map(l=>`${l.player.f} ${l.player.l}`).join(', ')}</span></div>`:''}<div class="pl">${srt.map(p=>{const remC=Math.max(0,p.cYears-p.cSigned);return`<div class="pc ${expP===p.id?'exp':''} ${p.loanFrom?'loan':''}" data-pid="${p.id}"><div class="pm"><div class="pos ${pc(p.pos)}">${p.pos}</div><div class="pi"><div class="pn">${p.f} ${p.l} ${p.loanFrom?'<span style="font-size:9px;color:var(--purple)">(host.)</span>':''}</div><div class="pd">${p.age}let • ${fmt(p.sal)}/r • ${remC.toFixed(1)}let</div></div><div style="text-align:right"><div class="ovr ${rc(p.o)}">${Math.round(p.o)}</div></div></div>${expP===p.id?`<div class="pex"><div class="srow"><div class="sbox"><div class="sbox-l">BRU</div><div class="sbox-v ${rc(p.sk)}">${Math.round(p.sk)}</div></div><div class="sbox"><div class="sbox-l">STŘ</div><div class="sbox-v ${rc(p.sh)}">${Math.round(p.sh)}</div></div><div class="sbox"><div class="sbox-l">PŘI</div><div class="sbox-v ${rc(p.pa)}">${Math.round(p.pa)}</div></div><div class="sbox"><div class="sbox-l">OBR</div><div class="sbox-v ${rc(p.de)}">${Math.round(p.de)}</div></div><div class="sbox"><div class="sbox-l">FYZ</div><div class="sbox-v ${rc(p.ph)}">${Math.round(p.ph)}</div></div></div><div class="srow"><div class="sbox"><div class="sbox-l">Zápasy</div><div class="sbox-v">${p.gp}</div></div><div class="sbox"><div class="sbox-l">Góly</div><div class="sbox-v grn">${p.g}</div></div><div class="sbox"><div class="sbox-l">Asist.</div><div class="sbox-v blu">${p.a}</div></div><div class="sbox"><div class="sbox-l">Morál</div><div class="sbox-v ${p.moral>=60?'grn':'red'}">${p.moral}%</div></div></div><div class="pex-btns">${!p.loanFrom?`<button class="pex-btn train" data-opentrain="${p.id}">🏋️ Trénink</button><button class="pex-btn contract" data-opencont="${p.id}">📝 Smlouva</button><button class="pex-btn loan" data-openloan="${p.id}">🔄 Hostování</button><button class="pex-btn release" data-rel="${p.id}">❌ Propustit</button>`:`<span style="font-size:10px;color:var(--purple)">Hostuje z ${p.loanFrom}</span>`}</div></div>`:''}</div>`;}).join('')}${loanedOut.length>0?`<div style="padding:10px"><div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:8px">📤 Hráči na hostování</div>${loanedOut.map(p=>{const loan=gs.loansOut.find(l=>l.player.id===p.id);return`<div class="loan-card"><div class="loan-header"><span class="loan-team">${loan?.team||'Neznámý tým'}</span><span class="loan-duration">${loan?.weeksLeft||0} týdnů</span></div><div class="loan-player"><div class="pos ${pc(p.pos)}">${p.pos}</div><div class="pi"><div class="pn">${p.f} ${p.l}</div><div class="pd">Příjem: ${fmt(loan?.fee||0)}/rok</div></div><div class="ovr ${rc(p.o)}">${p.o}</div></div></div>`;}).join('')}</div>`:''}</div>`;}
+function rTac(){const tac=TACTICS[gs.tactic];return`<div class="tac-card"><div class="tac-title">🎯 Herní styl</div><div class="tac-options">${Object.entries(TACTICS).map(([k,v])=>`<button class="tac-opt ${gs.tactic===k?'act':''}" data-tac="${k}"><div class="tac-opt-icon">${v.icon}</div><div class="tac-opt-name">${v.name}</div><div class="tac-opt-desc">${v.desc}</div></button>`).join('')}</div><div class="tac-info"><strong>Aktuální efekt:</strong><br>Střelba: ${Math.round(tac.shotMod*100)}% | Obrana: ${Math.round(tac.defMod*100)}%</div></div><div class="tac-card"><div class="tac-title">📊 Týmové statistiky</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[{l:'Průměr OVR',v:Math.round(gs.roster.filter(p=>!p.onLoan).reduce((s,p)=>s+p.o,0)/gs.roster.filter(p=>!p.onLoan).length),c:'blu'},{l:'Morálka',v:Math.round(gs.roster.reduce((s,p)=>s+p.moral,0)/gs.roster.length)+'%',c:''},{l:'Aktivních',v:gs.roster.filter(p=>!p.onLoan).length,c:''},{l:'Na hostování',v:gs.roster.filter(p=>p.onLoan).length,c:'pur'}].map(s=>`<div style="background:var(--bg1);padding:10px;border-radius:8px;text-align:center"><div style="font-size:18px;font-weight:700" class="${s.c}">${s.v}</div><div style="font-size:9px;color:var(--txt3)">${s.l}</div></div>`).join('')}</div></div>`;}
+function rFin(){calcFinances();const totInc=Object.values(gs.finances.income).reduce((a,b)=>a+b,0);const totExp=Object.values(gs.finances.expenses).reduce((a,b)=>a+b,0);const incLabels={tickets:'🎟️ Vstupenky',merch:'👕 Merch',sponsor:'🤝 Sponzoři',tv:'📺 TV práva',loans:'📤 Hostování ven'};const expLabels={salaries:'💰 Platy',stadium:'🏟️ Stadion',travel:'✈️ Cestování',training:'🏋️ Trénink',loans:'📥 Hostování k nám'};return`<div class="fin-card"><div class="fin-title">📈 Příjmy (týdně)</div>${Object.entries(gs.finances.income).filter(([k,v])=>v>0).map(([k,v])=>`<div class="fin-row"><span class="fin-label">${incLabels[k]||k}</span><span class="fin-value grn">+${fmt(v)}</span></div>`).join('')}<div class="fin-total"><span class="fin-total-label">Celkem</span><span class="fin-total-value grn">+${fmt(totInc)}</span></div></div><div class="fin-card"><div class="fin-title">📉 Výdaje (týdně)</div>${Object.entries(gs.finances.expenses).filter(([k,v])=>v>0).map(([k,v])=>`<div class="fin-row"><span class="fin-label">${expLabels[k]||k}</span><span class="fin-value red">-${fmt(v)}</span></div>`).join('')}<div class="fin-total"><span class="fin-total-label">Celkem</span><span class="fin-total-value red">-${fmt(totExp)}</span></div></div><div class="fin-card"><div class="fin-title">💵 Bilance</div><div class="fin-total" style="margin:0"><span class="fin-total-label">Týdenní zisk/ztráta</span><span class="fin-total-value ${totInc-totExp>=0?'grn':'red'}">${totInc-totExp>=0?'+':''}${fmt(totInc-totExp)}</span></div></div>`;}
+function rStd(){return`<div style="padding:12px;border-bottom:1px solid var(--bg3)"><h2 style="font-size:16px">Tabulka Extraligy</h2></div><table class="tbl"><thead><tr><th>#</th><th>Tým</th><th>Z</th><th>V</th><th>P</th><th>B</th></tr></thead><tbody>${gs.standings.map((t,i)=>{const isU=t.id===gs.team.id,pc=i<4?'pg':i<10?'pb':i<12?'py':'pr';return`<tr class="${isU?'usr':''}"><td class="${pc}" style="font-weight:700">${i+1}</td><td><div class="tc"><div class="ml" style="background:${t.cl}">${t.n.split(' ').pop().substring(0,2).toUpperCase()}</div><span style="${isU?'color:var(--blue);font-weight:600':''}">${t.n.split(' ').pop()}</span></div></td><td>${t.pl}</td><td class="grn">${t.w}</td><td class="red">${t.l}</td><td style="font-weight:700">${t.pts}</td></tr>`;}).join('')}</tbody></table>`;}
+function rTra(){return`<div class="tabs-cont"><button class="tab-btn ${subTab==='roster'?'act':''}" data-stab="roster">🛒 Trh</button><button class="tab-btn ${subTab==='loans'?'act':''}" data-stab="loans">🔄 Hostování</button></div>${subTab==='roster'?rMarket():rLoans()}`;}
+function rMarket(){return`<div style="padding:10px;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--txt2)">${gs.market.length} hráčů</span><button class="ref-b" id="refBtn">🔄</button></div><div class="pl">${gs.market.filter(p=>!p.forLoan).map(p=>{const can=gs.budget>=p.pr;return`<div class="pc"><div class="pm"><div class="pos ${pc(p.pos)}">${p.pos}</div><div class="pi"><div class="pn">${p.f} ${p.l}</div><div class="pd">${p.age}let • ${p.cYears}r smlouva</div></div><div style="text-align:right"><div class="ovr ${rc(p.o)}">${Math.round(p.o)}</div><div style="font-size:10px;color:var(--txt3)">${fmt(p.pr)}</div><button class="sign-b ${can?'av':'un'}" data-sign="${p.id}">${can?'Koupit':'Málo Kč'}</button></div></div></div>`;}).join('')}</div>`;}
+function rLoans(){return`<div style="padding:10px"><div style="font-size:12px;font-weight:600;margin-bottom:10px">Hráči k hostování</div>${gs.market.filter(p=>p.forLoan).map(p=>{const can=gs.budget>=p.loanFee*4;return`<div class="pc loan"><div class="pm"><div class="pos ${pc(p.pos)}">${p.pos}</div><div class="pi"><div class="pn">${p.f} ${p.l}</div><div class="pd">${p.age}let • Poplatek: ${fmt(p.loanFee)}/týden</div></div><div style="text-align:right"><div class="ovr ${rc(p.o)}">${Math.round(p.o)}</div><button class="sign-b ${can?'loan':'un'}" data-loanin="${p.id}">${can?'Hostovat':'Málo Kč'}</button></div></div></div>`;}).join('')}</div>`;}
+function bindEv(){document.querySelectorAll('.tmc[data-tid]').forEach(el=>{el.onclick=()=>{const tm=T.find(t=>t.id===el.dataset.tid);if(tm)stG(tm);};});document.querySelectorAll('.nav-b[data-tab]').forEach(el=>{el.onclick=()=>{tab=el.dataset.tab;expP=null;render();};});document.querySelectorAll('.tab-btn[data-stab]').forEach(el=>{el.onclick=()=>{subTab=el.dataset.stab;render();};});const plBtn=document.getElementById('plBtn');if(plBtn)plBtn.onclick=shMode;const qBtn=document.getElementById('qBtn');if(qBtn)qBtn.onclick=()=>stMatch(false);const cBtn=document.getElementById('cBtn');if(cBtn)cBtn.onclick=()=>stMatch(true);const canBtn=document.getElementById('canBtn');if(canBtn)canBtn.onclick=()=>{showMode=false;render();};document.querySelectorAll('.spd-b[data-spd],.spd-d[data-spd]').forEach(el=>{el.onclick=()=>{speed=el.dataset.spd;render();};});const skBtn=document.getElementById('skBtn');if(skBtn)skBtn.onclick=skipM;const clBtn=document.getElementById('clBtn');if(clBtn)clBtn.onclick=closeLive;const contBtn=document.getElementById('contBtn');if(contBtn)contBtn.onclick=contP;const skBrkBtn=document.getElementById('skBrkBtn');if(skBrkBtn)skBrkBtn.onclick=()=>{showBreak=false;skipM();};const clResBtn=document.getElementById('clResBtn');if(clResBtn)clResBtn.onclick=()=>{showRes=false;lastRes=null;render();};document.querySelectorAll('.pc[data-pid]').forEach(el=>{const pm=el.querySelector('.pm');if(pm)pm.onclick=()=>{expP=expP===el.dataset.pid?null:el.dataset.pid;render();};});document.querySelectorAll('[data-rel]').forEach(el=>{el.onclick=e=>{e.stopPropagation();relP(el.dataset.rel);};});document.querySelectorAll('[data-sign]').forEach(el=>{el.onclick=()=>signP(el.dataset.sign);});document.querySelectorAll('[data-loanin]').forEach(el=>{el.onclick=()=>loanIn(el.dataset.loanin);});const refBtn=document.getElementById('refBtn');if(refBtn)refBtn.onclick=()=>{gs.market=gM();save();render();};document.querySelectorAll('[data-tac]').forEach(el=>{el.onclick=()=>setTactic(el.dataset.tac);});document.querySelectorAll('[data-opentrain]').forEach(el=>{el.onclick=e=>{e.stopPropagation();showTrain=el.dataset.opentrain;render();};});document.querySelectorAll('[data-opencont]').forEach(el=>{el.onclick=e=>{e.stopPropagation();showContract=el.dataset.opencont;render();};});document.querySelectorAll('[data-openloan]').forEach(el=>{el.onclick=e=>{e.stopPropagation();showLoan=el.dataset.openloan;render();};});const closeTrainBtn=document.getElementById('closeTrainBtn');if(closeTrainBtn)closeTrainBtn.onclick=()=>{showTrain=null;render();};document.querySelectorAll('[data-train]').forEach(el=>{el.onclick=()=>trainPlayer(showTrain,el.dataset.train);});const closeContBtn=document.getElementById('closeContBtn');if(closeContBtn)closeContBtn.onclick=()=>{showContract=null;render();};document.querySelectorAll('[data-ext]').forEach(el=>{const[y,m]=el.dataset.ext.split('-').map(Number);el.onclick=()=>extendContract(showContract,y,m);});const closeLoanBtn=document.getElementById('closeLoanBtn');if(closeLoanBtn)closeLoanBtn.onclick=()=>{showLoan=null;render();};const confirmLoanBtn=document.getElementById('confirmLoanBtn');if(confirmLoanBtn)confirmLoanBtn.onclick=()=>loanOut(showLoan);}
+load();render();
+</script>
 </body>
 </html>
